@@ -15,7 +15,6 @@
       overflow-x: hidden;
       transition: background 0.5s ease;
     }
-
     .scorebug {
       display: flex;
       justify-content: space-between;
@@ -29,33 +28,28 @@
       border: 3px solid #ffffff;
       margin: 20px auto;
     }
-
     .team {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .team img {
       width: 50px;
       height: 50px;
       border-radius: 8px;
       border: 2px solid white;
     }
-
     .team-name {
       font-size: 20px;
       color: #ffffff;
       text-shadow: 0 0 5px #000;
     }
-
     .team-score {
       font-size: 30px;
       font-weight: bold;
       color: #ffd700;
       text-shadow: 0 0 3px #000;
     }
-
     .game-info {
       text-align: center;
       background: rgba(255, 255, 255, 0.15);
@@ -68,24 +62,20 @@
       justify-content: center;
       font-size: 14px;
     }
-
     .game-clock {
       font-size: 22px;
       color: #00ffcc;
       font-weight: bold;
     }
-
     .inning {
       font-size: 14px;
       color: #ffffff;
     }
-
     .bases {
       display: flex;
       gap: 4px;
       margin-top: 6px;
     }
-
     .base {
       width: 12px;
       height: 12px;
@@ -94,11 +84,7 @@
       border: 1px solid #000;
       transform: rotate(45deg);
     }
-
-    .active-base {
-      background: #00ff00;
-    }
-
+    .active-base { background: #00ff00; }
     .control-panel {
       max-width: 900px;
       background: rgba(0, 0, 0, 0.8);
@@ -107,19 +93,14 @@
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
-
-    .control-panel h3 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
+    .control-panel h3 { text-align: center; margin-bottom: 20px; }
     .control-row {
       display: flex;
       gap: 10px;
       margin-bottom: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
-
     .control-panel button {
       padding: 10px;
       background: #007bff;
@@ -131,16 +112,13 @@
       flex: 1;
       min-width: 80px;
     }
-
     .control-panel input[type="text"] {
       flex: 2;
       padding: 10px;
       border-radius: 6px;
       border: none;
-    }
-
-    .logo-upload {
-      display: none;
+      background: #222;
+      color: #fff;
     }
   </style>
 </head>
@@ -151,17 +129,14 @@
       <span class="team-name" id="home-name">GUARDIANS</span>
       <span class="team-score" id="home-score">3</span>
     </div>
-
     <div class="game-info">
       <div class="game-clock" id="game-clock">TOP 7TH</div>
-      <div class="inning" id="inning">Balls: 2 • Strikes: 1 • Outs: 1</div>
       <div class="bases">
         <div class="base" id="base1"></div>
         <div class="base" id="base2"></div>
         <div class="base" id="base3"></div>
       </div>
     </div>
-
     <div class="team away">
       <span class="team-score" id="away-score">5</span>
       <span class="team-name" id="away-name">YANKEES</span>
@@ -171,95 +146,61 @@
 
   <div class="control-panel">
     <h3>Scorebug Controls</h3>
+    <!-- Team Name Inputs -->
     <div class="control-row">
-      <button onclick="adjustScore('home', 1)">Home +1</button>
-      <button onclick="adjustScore('home', -1)">Home -1</button>
-      <button onclick="adjustScore('away', 1)">Away +1</button>
-      <button onclick="adjustScore('away', -1)">Away -1</button>
+      <input type="text" id="home-name-input" placeholder="Home Team Name" oninput="updateTeamName('home')">
+      <input type="text" id="away-name-input" placeholder="Away Team Name" oninput="updateTeamName('away')">
     </div>
+    <!-- Logo Upload -->
     <div class="control-row">
-      <button onclick="adjustCount('balls', 1)">Ball +</button>
-      <button onclick="adjustCount('balls', -1)">Ball -</button>
-      <button onclick="adjustCount('strikes', 1)">Strike +</button>
-      <button onclick="adjustCount('strikes', -1)">Strike -</button>
-      <button onclick="adjustCount('outs', 1)">Out +</button>
-      <button onclick="adjustCount('outs', -1)">Out -</button>
+      <input type="file" accept="image/*" id="home-logo-file" style="display:none" onchange="uploadLogo(event,'home')">
+      <button onclick="document.getElementById('home-logo-file').click()">Upload Home Logo</button>
+      <input type="file" accept="image/*" id="away-logo-file" style="display:none" onchange="uploadLogo(event,'away')">
+      <button onclick="document.getElementById('away-logo-file').click()">Upload Away Logo</button>
     </div>
+    <!-- Score Buttons -->
+    <div class="control-row">
+      <button onclick="adjustScore('home',1)">Home +1</button>
+      <button onclick="adjustScore('home',-1)">Home -1</button>
+      <button onclick="adjustScore('away',1)">Away +1</button>
+      <button onclick="adjustScore('away',-1)">Away -1</button>
+    </div>
+    <!-- Count Buttons -->
+    <div class="control-row">
+      <button onclick="adjustCount('balls',1)">Ball +</button>
+      <button onclick="adjustCount('balls',-1)">Ball -</button>
+      <button onclick="adjustCount('strikes',1)">Strike +</button>
+      <button onclick="adjustCount('strikes',-1)">Strike -</button>
+      <button onclick="adjustCount('outs',1)">Out +</button>
+      <button onclick="adjustCount('outs',-1)">Out -</button>
+    </div>
+    <!-- Bases -->
     <div class="control-row">
       <button onclick="toggleBase(1)">Toggle 1st</button>
       <button onclick="toggleBase(2)">Toggle 2nd</button>
       <button onclick="toggleBase(3)">Toggle 3rd</button>
     </div>
+    <!-- Inning Input -->
     <div class="control-row">
-      <input type="text" id="background-url" placeholder="Enter background image URL">
-      <button onclick="changeBackground()">Change Background</button>
-    </div>
-    <div class="control-row">
-      <input type="file" accept="image/*" id="home-logo-file" class="logo-upload" onchange="uploadLogo(event, 'home')">
-      <button onclick="document.getElementById('home-logo-file').click()">Upload Home Logo</button>
-    </div>
-    <div class="control-row">
-      <input type="file" accept="image/*" id="away-logo-file" class="logo-upload" onchange="uploadLogo(event, 'away')">
-      <button onclick="document.getElementById('away-logo-file').click()">Upload Away Logo</button>
+      <input type="text" id="inning-input" placeholder="e.g. BOT 8TH" oninput="updateInning()">
     </div>
   </div>
 
   <script>
-    let homeScore = 3;
-    let awayScore = 5;
-    let balls = 2;
-    let strikes = 1;
-    let outs = 1;
-    let bases = [false, false, false];
+    let homeScore=3, awayScore=5, balls=0, strikes=0, outs=0, bases=[false,false,false];
 
-    function updateScorebug() {
-      document.getElementById('home-score').textContent = homeScore;
-      document.getElementById('away-score').textContent = awayScore;
-      document.getElementById('inning').textContent = `Balls: ${balls} • Strikes: ${strikes} • Outs: ${outs}`;
-      document.getElementById('base1').className = bases[0] ? 'base active-base' : 'base';
-      document.getElementById('base2').className = bases[1] ? 'base active-base' : 'base';
-      document.getElementById('base3').className = bases[2] ? 'base active-base' : 'base';
+    function updateScorebug(){
+      document.getElementById('home-score').textContent=homeScore;
+      document.getElementById('away-score').textContent=awayScore;
     }
-
-    function adjustScore(team, delta) {
-      if (team === 'home') {
-        homeScore = Math.max(0, homeScore + delta);
-      } else {
-        awayScore = Math.max(0, awayScore + delta);
-      }
-      updateScorebug();
-    }
-
-    function adjustCount(type, delta) {
-      if (type === 'balls') balls = Math.max(0, Math.min(3, balls + delta));
-      if (type === 'strikes') strikes = Math.max(0, Math.min(2, strikes + delta));
-      if (type === 'outs') outs = Math.max(0, Math.min(2, outs + delta));
-      updateScorebug();
-    }
-
-    function toggleBase(baseIndex) {
-      bases[baseIndex - 1] = !bases[baseIndex - 1];
-      updateScorebug();
-    }
-
-    function changeBackground() {
-      const url = document.getElementById('background-url').value;
-      if (url) {
-        document.body.style.background = `url('${url}') center/cover no-repeat`;
-      }
-    }
-
-    function uploadLogo(event, team) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        document.getElementById(`${team}-logo`).src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    updateScorebug();
+    function adjustScore(team,delta){ if(team==='home') homeScore=Math.max(0,homeScore+delta); else awayScore=Math.max(0,awayScore+delta); updateScorebug(); }
+    function adjustCount(type,delta){ if(type==='balls') balls=Math.max(0,Math.min(3,balls+delta)); if(type==='strikes') strikes=Math.max(0,Math.min(2,strikes+delta)); if(type==='outs') outs=Math.max(0,Math.min(2,outs+delta)); document.getElementById('inning').textContent=`Balls:${balls} • Strikes:${strikes} • Outs:${outs}`; }
+    function toggleBase(i){ bases[i-1]=!bases[i-1]; document.getElementById('base'+i).className=bases[i-1]?'base active-base':'base'; }
+    function uploadLogo(e,team){ const r=new FileReader(); r.onload=()=>document.getElementById(team+'-logo').src=r.result; r.readAsDataURL(e.target.files[0]); }
+    function updateTeamName(team){ const v=document.getElementById(team+'-name-input').value; if(v)document.getElementById(team+'-name').textContent=v; }
+    function updateInning(){ const v=document.getElementById('inning-input').value; if(v)document.getElementById('game-clock').textContent=v; }
+    updateScorebug(); document.getElementById('inning').textContent=`Balls:${balls} • Strikes:${strikes} • Outs:${outs}`;
   </script>
 </body>
 </html>
+
