@@ -138,6 +138,10 @@
       border-radius: 6px;
       border: none;
     }
+
+    .logo-upload {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -191,12 +195,12 @@
       <button onclick="changeBackground()">Change Background</button>
     </div>
     <div class="control-row">
-      <input type="text" id="home-logo-url" placeholder="Home team logo URL">
-      <button onclick="changeLogo('home')">Set Home Logo</button>
+      <input type="file" accept="image/*" id="home-logo-file" class="logo-upload" onchange="uploadLogo(event, 'home')">
+      <button onclick="document.getElementById('home-logo-file').click()">Upload Home Logo</button>
     </div>
     <div class="control-row">
-      <input type="text" id="away-logo-url" placeholder="Away team logo URL">
-      <button onclick="changeLogo('away')">Set Away Logo</button>
+      <input type="file" accept="image/*" id="away-logo-file" class="logo-upload" onchange="uploadLogo(event, 'away')">
+      <button onclick="document.getElementById('away-logo-file').click()">Upload Away Logo</button>
     </div>
   </div>
 
@@ -245,11 +249,14 @@
       }
     }
 
-    function changeLogo(team) {
-      const url = document.getElementById(`${team}-logo-url`).value;
-      if (url) {
-        document.getElementById(`${team}-logo`).src = url;
-      }
+    function uploadLogo(event, team) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById(`${team}-logo`).src = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
 
     updateScorebug();
