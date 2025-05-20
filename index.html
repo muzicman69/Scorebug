@@ -107,22 +107,16 @@
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
 
-    .control-panel label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
+    .control-panel h3 {
+      text-align: center;
+      margin-bottom: 20px;
     }
 
-    .control-panel input, .control-panel select {
-      width: 100%;
-      margin-top: 5px;
+    .control-row {
+      display: flex;
+      gap: 10px;
       margin-bottom: 10px;
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      font-size: 14px;
-      background: #2a2a2a;
-      color: white;
+      flex-wrap: wrap;
     }
 
     .control-panel button {
@@ -133,13 +127,12 @@
       border-radius: 6px;
       font-weight: bold;
       cursor: pointer;
-      width: 100%;
-      margin-top: 15px;
+      flex: 1;
+      min-width: 80px;
     }
   </style>
 </head>
 <body>
-
   <div class="scorebug" id="scorebug">
     <div class="team home">
       <img src="home-logo.png" alt="Home Logo" id="home-logo">
@@ -165,63 +158,68 @@
   </div>
 
   <div class="control-panel">
-    <label>Home Team Name</label>
-    <input type="text" id="input-home-name" placeholder="Guardians">
-
-    <label>Home Score</label>
-    <input type="number" id="input-home-score" placeholder="3">
-
-    <label>Home Logo URL</label>
-    <input type="text" id="input-home-logo" placeholder="home-logo.png">
-
-    <label>Away Team Name</label>
-    <input type="text" id="input-away-name" placeholder="Yankees">
-
-    <label>Away Score</label>
-    <input type="number" id="input-away-score" placeholder="5">
-
-    <label>Away Logo URL</label>
-    <input type="text" id="input-away-logo" placeholder="away-logo.png">
-
-    <label>Inning (e.g. TOP 7TH)</label>
-    <input type="text" id="input-inning" placeholder="TOP 7TH">
-
-    <label>Balls</label>
-    <input type="number" id="input-balls" placeholder="2">
-
-    <label>Strikes</label>
-    <input type="number" id="input-strikes" placeholder="1">
-
-    <label>Outs</label>
-    <input type="number" id="input-outs" placeholder="1">
-
-    <label>Bases Occupied (e.g. 1,0,1)</label>
-    <input type="text" id="input-bases" placeholder="1,0,1">
-
-    <button onclick="updateScorebug()">Update Scorebug</button>
+    <h3>Scorebug Controls</h3>
+    <div class="control-row">
+      <button onclick="adjustScore('home', 1)">Home +1</button>
+      <button onclick="adjustScore('home', -1)">Home -1</button>
+      <button onclick="adjustScore('away', 1)">Away +1</button>
+      <button onclick="adjustScore('away', -1)">Away -1</button>
+    </div>
+    <div class="control-row">
+      <button onclick="adjustCount('balls', 1)">Ball +</button>
+      <button onclick="adjustCount('balls', -1)">Ball -</button>
+      <button onclick="adjustCount('strikes', 1)">Strike +</button>
+      <button onclick="adjustCount('strikes', -1)">Strike -</button>
+      <button onclick="adjustCount('outs', 1)">Out +</button>
+      <button onclick="adjustCount('outs', -1)">Out -</button>
+    </div>
+    <div class="control-row">
+      <button onclick="toggleBase(1)">Toggle 1st</button>
+      <button onclick="toggleBase(2)">Toggle 2nd</button>
+      <button onclick="toggleBase(3)">Toggle 3rd</button>
+    </div>
   </div>
 
   <script>
+    let homeScore = 3;
+    let awayScore = 5;
+    let balls = 2;
+    let strikes = 1;
+    let outs = 1;
+    let bases = [false, false, false];
+
     function updateScorebug() {
-      document.getElementById('home-name').textContent = document.getElementById('input-home-name').value || 'HOME';
-      document.getElementById('home-score').textContent = document.getElementById('input-home-score').value || '0';
-      document.getElementById('home-logo').src = document.getElementById('input-home-logo').value || 'home-logo.png';
-
-      document.getElementById('away-name').textContent = document.getElementById('input-away-name').value || 'AWAY';
-      document.getElementById('away-score').textContent = document.getElementById('input-away-score').value || '0';
-      document.getElementById('away-logo').src = document.getElementById('input-away-logo').value || 'away-logo.png';
-
-      document.getElementById('game-clock').textContent = document.getElementById('input-inning').value || 'INNING';
-      const balls = document.getElementById('input-balls').value || 0;
-      const strikes = document.getElementById('input-strikes').value || 0;
-      const outs = document.getElementById('input-outs').value || 0;
+      document.getElementById('home-score').textContent = homeScore;
+      document.getElementById('away-score').textContent = awayScore;
       document.getElementById('inning').textContent = `Balls: ${balls} • Strikes: ${strikes} • Outs: ${outs}`;
-
-      const bases = (document.getElementById('input-bases').value || '0,0,0').split(',');
-      document.getElementById('base1').className = bases[0] === '1' ? 'base active-base' : 'base';
-      document.getElementById('base2').className = bases[1] === '1' ? 'base active-base' : 'base';
-      document.getElementById('base3').className = bases[2] === '1' ? 'base active-base' : 'base';
+      document.getElementById('base1').className = bases[0] ? 'base active-base' : 'base';
+      document.getElementById('base2').className = bases[1] ? 'base active-base' : 'base';
+      document.getElementById('base3').className = bases[2] ? 'base active-base' : 'base';
     }
+
+    function adjustScore(team, delta) {
+      if (team === 'home') {
+        homeScore = Math.max(0, homeScore + delta);
+      } else {
+        awayScore = Math.max(0, awayScore + delta);
+      }
+      updateScorebug();
+    }
+
+    function adjustCount(type, delta) {
+      if (type === 'balls') balls = Math.max(0, Math.min(3, balls + delta));
+      if (type === 'strikes') strikes = Math.max(0, Math.min(2, strikes + delta));
+      if (type === 'outs') outs = Math.max(0, Math.min(2, outs + delta));
+      updateScorebug();
+    }
+
+    function toggleBase(baseIndex) {
+      bases[baseIndex - 1] = !bases[baseIndex - 1];
+      updateScorebug();
+    }
+
+    // Initial update
+    updateScorebug();
   </script>
 </body>
 </html>
