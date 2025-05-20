@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Scorebug Control Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to bottom, #001f3f, #ffffff);
+      font-family: 'Orbitron', sans-serif;
+      color: white;
+      padding: 20px;
+    }
+
+    .scorebug {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 800px;
+      height: 100px;
+      background: linear-gradient(135deg, #b22234, #ffffff, #3c3b6e);
+      border-radius: 16px;
+      padding: 0 30px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      margin-bottom: 30px;
+      border: 3px solid #ffffff;
+    }
+
+    .team {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .team img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      border: 2px solid white;
+    }
+
+    .team-name {
+      font-size: 20px;
+      color: #ffffff;
+      text-shadow: 0 0 5px #000;
+    }
+
+    .team-score {
+      font-size: 32px;
+      font-weight: bold;
+      color: #ffd700;
+      margin-left: 10px;
+      text-shadow: 0 0 3px #000;
+    }
+
+    .game-info {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: 2px solid #ffffff;
+    }
+
+    .game-clock {
+      font-size: 22px;
+      color: #00ffcc;
+      font-weight: bold;
+    }
+
+    .quarter {
+      font-size: 14px;
+      color: #ffffff;
+    }
+
+    .control-panel {
+      max-width: 800px;
+      background: #002244;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+      border: 2px solid #ffffff;
+    }
+
+    .control-panel h3 {
+      color: #ffffff;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #ffffff;
+      padding-bottom: 10px;
+    }
+
+    .control-panel input, .control-panel select {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      background: #e6e6e6;
+      color: #000;
+    }
+
+    .control-panel button {
+      padding: 10px;
+      background: #b22234;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+
+    .control-panel button:hover {
+      background: #8b1a25;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scorebug" id="scorebug">
+    <div class="team home">
+      <img src="home-logo.png" alt="Home Logo" id="home-logo">
+      <span class="team-name" id="home-name">BROWNS</span>
+      <span class="team-score" id="home-score">24</span>
+    </div>
+    <div class="game-info">
+      <span class="game-clock" id="game-clock">12:45</span>
+      <span class="quarter" id="game-quarter">Q3</span>
+    </div>
+    <div class="team away">
+      <span class="team-score" id="away-score">17</span>
+      <span class="team-name" id="away-name">STEELERS</span>
+      <img src="away-logo.png" alt="Away Logo" id="away-logo">
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <h3>Scorebug Control Panel</h3>
+    <label>Home Team Name</label>
+    <input type="text" id="input-home-name" placeholder="e.g. Browns">
+
+    <label>Home Score</label>
+    <input type="number" id="input-home-score">
+
+    <label>Home Logo URL</label>
+    <input type="text" id="input-home-logo" placeholder="home-logo.png">
+
+    <label>Away Team Name</label>
+    <input type="text" id="input-away-name" placeholder="e.g. Steelers">
+
+    <label>Away Score</label>
+    <input type="number" id="input-away-score">
+
+    <label>Away Logo URL</label>
+    <input type="text" id="input-away-logo" placeholder="away-logo.png">
+
+    <label>Game Clock</label>
+    <input type="text" id="input-clock" placeholder="e.g. 10:00">
+
+    <label>Quarter</label>
+    <select id="input-quarter">
+      <option value="Q1">Q1</option>
+      <option value="Q2">Q2</option>
+      <option value="Q3">Q3</option>
+      <option value="Q4">Q4</option>
+      <option value="OT">OT</option>
+    </select>
+
+    <button onclick="updateScorebug()">Update Scorebug</button>
+  </div>
+
+  <script>
+    function updateScorebug() {
+      document.getElementById('home-name').textContent = document.getElementById('input-home-name').value || 'HOME';
+      document.getElementById('home-score').textContent = document.getElementById('input-home-score').value || '0';
+      document.getElementById('home-logo').src = document.getElementById('input-home-logo').value || 'home-logo.png';
+
+      document.getElementById('away-name').textContent = document.getElementById('input-away-name').value || 'AWAY';
+      document.getElementById('away-score').textContent = document.getElementById('input-away-score').value || '0';
+      document.getElementById('away-logo').src = document.getElementById('input-away-logo').value || 'away-logo.png';
+
+      document.getElementById('game-clock').textContent = document.getElementById('input-clock').value || '00:00';
+      document.getElementById('game-quarter').textContent = document.getElementById('input-quarter').value || 'Q1';
+    }
+  </script>
+</body>
+</html>

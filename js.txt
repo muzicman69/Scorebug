@@ -1,0 +1,34 @@
+<script>
+function updateScore(team, value) {
+  document.getElementById(`${team}-score`).textContent = value;
+  document.getElementById(`${team}-score`).classList.add('flash');
+  setTimeout(() => {
+    document.getElementById(`${team}-score`).classList.remove('flash');
+  }, 1500);
+}
+
+function updateTeamName(team, name) {
+  document.getElementById(`${team}-name`).textContent = name.toUpperCase();
+}
+
+function updateLogo(team, url) {
+  document.getElementById(`${team}-logo`).src = url;
+}
+
+function updateClock(time) {
+  document.getElementById("game-clock").textContent = time;
+}
+
+function updateQuarter(q) {
+  document.getElementById("game-quarter").textContent = q;
+}
+
+// Example usage:
+// updateScore('home', 28);
+// updateClock('10:12');
+// updateQuarter('Q4');
+// updateTeamName('away', 'Ravens');
+// updateLogo('away', 'ravens-logo.png');
+</script>
+
+
