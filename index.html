@@ -1,136 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Baseball Scorebug - Twitch Overlay</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Flag_of_the_United_States.svg/2560px-Flag_of_the_United_States.svg.png') center/cover no-repeat;
-      font-family: 'Orbitron', sans-serif;
-      color: white;
-      padding: 0;
-      margin: 0;
-      overflow-x: hidden;
-      transition: background 0.5s ease;
-    }
+    body, html { margin:0; padding:0; background:transparent; overflow:hidden; }
     .scorebug {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 900px;
-      height: 100px;
-      background: rgba(0, 0, 0, 0.7);
-      border-radius: 16px;
-      padding: 0 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
-      border: 3px solid #ffffff;
-      margin: 20px auto;
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      display:flex; justify-content:space-between; align-items:center;
+      width:900px; height:100px;
+      background:rgba(0,0,0,0.7); border:3px solid #fff; border-radius:16px;
+      padding:0 20px; box-shadow:0 8px 20px rgba(0,0,0,0.7);
+      font-family:'Orbitron',sans-serif; color:#fff;
     }
-    .team {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .team img {
-      width: 50px;
-      height: 50px;
-      border-radius: 8px;
-      border: 2px solid white;
-    }
-    .team-name {
-      font-size: 20px;
-      color: #ffffff;
-      text-shadow: 0 0 5px #000;
-    }
-    .team-score {
-      font-size: 30px;
-      font-weight: bold;
-      color: #ffd700;
-      text-shadow: 0 0 3px #000;
-    }
+    .team { display:flex; align-items:center; gap:10px; }
+    .team img { width:50px; height:50px; border-radius:8px; border:2px solid #fff; }
+    .team-name { font-size:20px; text-shadow:0 0 5px #000; }
+    .team-score { font-size:30px; font-weight:bold; color:#ffd700; text-shadow:0 0 3px #000; }
     .game-info {
-      text-align: center;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 10px 18px;
-      border-radius: 12px;
-      border: 2px solid #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-size:14px; background:rgba(255,255,255,0.15); border:2px solid #fff;
+      border-radius:12px; padding:10px 18px;
     }
-    .game-clock {
-      font-size: 22px;
-      color: #00ffcc;
-      font-weight: bold;
+    .game-clock { font-size:22px; color:#0fc; font-weight:bold; }
+    .bases { display:flex; gap:4px; margin-top:6px; }
+    .base { width:12px; height:12px; background:#fff; border-radius:2px; border:1px solid #000; transform:rotate(45deg); }
+    .active-base { background:#0f0; }
+    .control-panel { position:fixed; bottom:10px; left:50%; transform:translateX(-50%);
+      background:rgba(0,0,0,0.8); padding:10px; border-radius:8px;
+      display:none; max-width:90%; font-family:sans-serif; color:#fff;
     }
-    .inning {
-      font-size: 14px;
-      color: #ffffff;
-    }
-    .bases {
-      display: flex;
-      gap: 4px;
-      margin-top: 6px;
-    }
-    .base {
-      width: 12px;
-      height: 12px;
-      background: #fff;
-      border-radius: 2px;
-      border: 1px solid #000;
-      transform: rotate(45deg);
-    }
-    .active-base { background: #00ff00; }
-    .control-panel {
-      max-width: 900px;
-      background: rgba(0, 0, 0, 0.8);
-      padding: 20px;
-      margin: 20px auto;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    }
-    .control-panel h3 { text-align: center; margin-bottom: 20px; }
-    .control-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .control-panel button {
-      padding: 10px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      flex: 1;
-      min-width: 80px;
-    }
-    .control-panel input[type="text"] {
-      flex: 2;
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      background: #222;
-      color: #fff;
-    }
+    .control-panel input, .control-panel button { margin:4px; padding:6px; border-radius:4px; border:none; }
+    .control-panel button { background:#007bff; color:#fff; cursor:pointer; }
   </style>
 </head>
 <body>
   <div class="scorebug" id="scorebug">
     <div class="team home">
-      <img src="home-logo.png" alt="Home Logo" id="home-logo">
-      <span class="team-name" id="home-name">GUARDIANS</span>
-      <span class="team-score" id="home-score">3</span>
+      <img id="home-logo" src="home-logo.png" alt="Home Logo">
+      <span class="team-name" id="home-name">Home</span>
+      <span class="team-score" id="home-score">0</span>
     </div>
     <div class="game-info">
-      <div class="game-clock" id="game-clock">TOP 7TH</div>
+      <div class="game-clock" id="game-clock">TOP 1ST</div>
       <div class="bases">
         <div class="base" id="base1"></div>
         <div class="base" id="base2"></div>
@@ -138,68 +52,40 @@
       </div>
     </div>
     <div class="team away">
-      <span class="team-score" id="away-score">5</span>
-      <span class="team-name" id="away-name">YANKEES</span>
-      <img src="away-logo.png" alt="Away Logo" id="away-logo">
+      <span class="team-score" id="away-score">0</span>
+      <span class="team-name" id="away-name">Away</span>
+      <img id="away-logo" src="away-logo.png" alt="Away Logo">
     </div>
   </div>
-
-  <div class="control-panel">
-    <h3>Scorebug Controls</h3>
-    <!-- Team Name Inputs -->
-    <div class="control-row">
-      <input type="text" id="home-name-input" placeholder="Home Team Name" oninput="updateTeamName('home')">
-      <input type="text" id="away-name-input" placeholder="Away Team Name" oninput="updateTeamName('away')">
-    </div>
-    <!-- Logo Upload -->
-    <div class="control-row">
-      <input type="file" accept="image/*" id="home-logo-file" style="display:none" onchange="uploadLogo(event,'home')">
-      <button onclick="document.getElementById('home-logo-file').click()">Upload Home Logo</button>
-      <input type="file" accept="image/*" id="away-logo-file" style="display:none" onchange="uploadLogo(event,'away')">
-      <button onclick="document.getElementById('away-logo-file').click()">Upload Away Logo</button>
-    </div>
-    <!-- Score Buttons -->
-    <div class="control-row">
-      <button onclick="adjustScore('home',1)">Home +1</button>
-      <button onclick="adjustScore('home',-1)">Home -1</button>
-      <button onclick="adjustScore('away',1)">Away +1</button>
-      <button onclick="adjustScore('away',-1)">Away -1</button>
-    </div>
-    <!-- Count Buttons -->
-    <div class="control-row">
-      <button onclick="adjustCount('balls',1)">Ball +</button>
-      <button onclick="adjustCount('balls',-1)">Ball -</button>
-      <button onclick="adjustCount('strikes',1)">Strike +</button>
-      <button onclick="adjustCount('strikes',-1)">Strike -</button>
-      <button onclick="adjustCount('outs',1)">Out +</button>
-      <button onclick="adjustCount('outs',-1)">Out -</button>
-    </div>
-    <!-- Bases -->
-    <div class="control-row">
-      <button onclick="toggleBase(1)">Toggle 1st</button>
-      <button onclick="toggleBase(2)">Toggle 2nd</button>
-      <button onclick="toggleBase(3)">Toggle 3rd</button>
-    </div>
-    <!-- Inning Input -->
-    <div class="control-row">
-      <input type="text" id="inning-input" placeholder="e.g. BOT 8TH" oninput="updateInning()">
-    </div>
+  <div class="control-panel" id="panel">
+    <input type="text" id="input-home-name" placeholder="Home Team Name">
+    <input type="file" id="input-home-logo" accept="image/*">
+    <input type="number" id="input-home-score" placeholder="Home Score" min="0">
+    <input type="text" id="input-away-name" placeholder="Away Team Name">
+    <input type="file" id="input-away-logo" accept="image/*">
+    <input type="number" id="input-away-score" placeholder="Away Score" min="0">
+    <input type="text" id="input-clock" placeholder="Clock/Inning (e.g. BOT 8TH)">
+    <input type="text" id="input-bases" placeholder="Bases (e.g. 101)">
   </div>
-
   <script>
-    let homeScore=3, awayScore=5, balls=0, strikes=0, outs=0, bases=[false,false,false];
-
-    function updateScorebug(){
-      document.getElementById('home-score').textContent=homeScore;
-      document.getElementById('away-score').textContent=awayScore;
-    }
-    function adjustScore(team,delta){ if(team==='home') homeScore=Math.max(0,homeScore+delta); else awayScore=Math.max(0,awayScore+delta); updateScorebug(); }
-    function adjustCount(type,delta){ if(type==='balls') balls=Math.max(0,Math.min(3,balls+delta)); if(type==='strikes') strikes=Math.max(0,Math.min(2,strikes+delta)); if(type==='outs') outs=Math.max(0,Math.min(2,outs+delta)); document.getElementById('inning').textContent=`Balls:${balls} • Strikes:${strikes} • Outs:${outs}`; }
-    function toggleBase(i){ bases[i-1]=!bases[i-1]; document.getElementById('base'+i).className=bases[i-1]?'base active-base':'base'; }
-    function uploadLogo(e,team){ const r=new FileReader(); r.onload=()=>document.getElementById(team+'-logo').src=r.result; r.readAsDataURL(e.target.files[0]); }
-    function updateTeamName(team){ const v=document.getElementById(team+'-name-input').value; if(v)document.getElementById(team+'-name').textContent=v; }
-    function updateInning(){ const v=document.getElementById('inning-input').value; if(v)document.getElementById('game-clock').textContent=v; }
-    updateScorebug(); document.getElementById('inning').textContent=`Balls:${balls} • Strikes:${strikes} • Outs:${outs}`;
+    const defaultState={ homeName:'Home',awayName:'Away',homeScore:0,awayScore:0,clock:'TOP 1ST',bases:[false,false,false],homeLogo:'home-logo.png',awayLogo:'away-logo.png' };
+    function loadState(){let s=localStorage.getItem('scorebugState');if(s)return JSON.parse(s);localStorage.setItem('scorebugState',JSON.stringify(defaultState));return {...defaultState}};
+    function saveState(st){localStorage.setItem('scorebugState',JSON.stringify(st));applyState(st)};
+    function applyState(st){document.getElementById('home-name').textContent=st.homeName;document.getElementById('away-name').textContent=st.awayName;document.getElementById('home-score').textContent=st.homeScore;document.getElementById('away-score').textContent=st.awayScore;document.getElementById('game-clock').textContent=st.clock;document.getElementById('home-logo').src=st.homeLogo;document.getElementById('away-logo').src=st.awayLogo;st.bases.forEach((b,i)=>document.getElementById('base'+(i+1)).className=b?'base active-base':'base')};
+    const state=loadState();applyState(state);
+    // Show controls if URL contains ?panel
+    if(window.location.search.includes('panel'))document.getElementById('panel').style.display='block';
+    function initControls(){const p=document.getElementById('panel');if(!p)return;
+      p.querySelector('#input-home-name').oninput=e=>{state.homeName=e.target.value||defaultState.homeName;saveState(state)};
+      p.querySelector('#input-away-name').oninput=e=>{state.awayName=e.target.value||defaultState.awayName;saveState(state)};
+      p.querySelector('#input-home-score').oninput=e=>{state.homeScore=parseInt(e.target.value)||0;saveState(state)};
+      p.querySelector('#input-away-score').oninput=e=>{state.awayScore=parseInt(e.target.value)||0;saveState(state)};
+      p.querySelector('#input-clock').oninput=e=>{state.clock=e.target.value||defaultState.clock;saveState(state)};
+      p.querySelector('#input-bases').oninput=e=>{state.bases=(e.target.value||'000').split('').map(c=>c==='1');saveState(state)};
+      p.querySelector('#input-home-logo').onchange=e=>{const f=e.target.files[0];const r=new FileReader();r.onload=()=>{state.homeLogo=r.result;saveState(state)};r.readAsDataURL(f)};
+      p.querySelector('#input-away-logo').onchange=e=>{const f=e.target.files[0];const r=new FileReader();r.onload=()=>{state.awayLogo=r.result;saveState(state)};r.readAsDataURL(f)};
+    };
+    initControls();
   </script>
 </body>
 </html>
