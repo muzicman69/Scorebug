@@ -7,12 +7,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
-      background: transparent;
+      background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Flag_of_the_United_States.svg/2560px-Flag_of_the_United_States.svg.png') center/cover no-repeat;
       font-family: 'Orbitron', sans-serif;
       color: white;
       padding: 0;
       margin: 0;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     .scorebug {
@@ -21,12 +21,12 @@
       align-items: center;
       width: 900px;
       height: 100px;
-      background: linear-gradient(135deg, #b22234, #ffffff, #3c3b6e);
+      background: rgba(0, 0, 0, 0.7);
       border-radius: 16px;
       padding: 0 20px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
       border: 3px solid #ffffff;
-      margin: 10px auto;
+      margin: 20px auto;
     }
 
     .team {
@@ -99,7 +99,42 @@
     }
 
     .control-panel {
-      display: none;
+      max-width: 900px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    .control-panel label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .control-panel input, .control-panel select {
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      background: #2a2a2a;
+      color: white;
+    }
+
+    .control-panel button {
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -117,8 +152,8 @@
       <div class="inning" id="inning">Balls: 2 • Strikes: 1 • Outs: 1</div>
       <div class="bases">
         <div class="base" id="base1"></div>
-        <div class="base" id="base2" class="active-base"></div>
-        <div class="base" id="base3" class="active-base"></div>
+        <div class="base" id="base2"></div>
+        <div class="base" id="base3"></div>
       </div>
     </div>
 
@@ -129,37 +164,64 @@
     </div>
   </div>
 
+  <div class="control-panel">
+    <label>Home Team Name</label>
+    <input type="text" id="input-home-name" placeholder="Guardians">
+
+    <label>Home Score</label>
+    <input type="number" id="input-home-score" placeholder="3">
+
+    <label>Home Logo URL</label>
+    <input type="text" id="input-home-logo" placeholder="home-logo.png">
+
+    <label>Away Team Name</label>
+    <input type="text" id="input-away-name" placeholder="Yankees">
+
+    <label>Away Score</label>
+    <input type="number" id="input-away-score" placeholder="5">
+
+    <label>Away Logo URL</label>
+    <input type="text" id="input-away-logo" placeholder="away-logo.png">
+
+    <label>Inning (e.g. TOP 7TH)</label>
+    <input type="text" id="input-inning" placeholder="TOP 7TH">
+
+    <label>Balls</label>
+    <input type="number" id="input-balls" placeholder="2">
+
+    <label>Strikes</label>
+    <input type="number" id="input-strikes" placeholder="1">
+
+    <label>Outs</label>
+    <input type="number" id="input-outs" placeholder="1">
+
+    <label>Bases Occupied (e.g. 1,0,1)</label>
+    <input type="text" id="input-bases" placeholder="1,0,1">
+
+    <button onclick="updateScorebug()">Update Scorebug</button>
+  </div>
+
   <script>
-    // Example Twitch-style auto-updater structure (WebSocket-compatible skeleton)
-    const state = {
-      home: { name: 'GUARDIANS', score: 3, logo: 'home-logo.png' },
-      away: { name: 'YANKEES', score: 5, logo: 'away-logo.png' },
-      inning: 'TOP 7TH',
-      balls: 2,
-      strikes: 1,
-      outs: 1,
-      bases: [false, true, true] // 1st, 2nd, 3rd
-    };
+    function updateScorebug() {
+      document.getElementById('home-name').textContent = document.getElementById('input-home-name').value || 'HOME';
+      document.getElementById('home-score').textContent = document.getElementById('input-home-score').value || '0';
+      document.getElementById('home-logo').src = document.getElementById('input-home-logo').value || 'home-logo.png';
 
-    function updateOverlay(newState) {
-      document.getElementById('home-name').textContent = newState.home.name;
-      document.getElementById('home-score').textContent = newState.home.score;
-      document.getElementById('home-logo').src = newState.home.logo;
+      document.getElementById('away-name').textContent = document.getElementById('input-away-name').value || 'AWAY';
+      document.getElementById('away-score').textContent = document.getElementById('input-away-score').value || '0';
+      document.getElementById('away-logo').src = document.getElementById('input-away-logo').value || 'away-logo.png';
 
-      document.getElementById('away-name').textContent = newState.away.name;
-      document.getElementById('away-score').textContent = newState.away.score;
-      document.getElementById('away-logo').src = newState.away.logo;
+      document.getElementById('game-clock').textContent = document.getElementById('input-inning').value || 'INNING';
+      const balls = document.getElementById('input-balls').value || 0;
+      const strikes = document.getElementById('input-strikes').value || 0;
+      const outs = document.getElementById('input-outs').value || 0;
+      document.getElementById('inning').textContent = `Balls: ${balls} • Strikes: ${strikes} • Outs: ${outs}`;
 
-      document.getElementById('game-clock').textContent = newState.inning;
-      document.getElementById('inning').textContent = `Balls: ${newState.balls} • Strikes: ${newState.strikes} • Outs: ${newState.outs}`;
-
-      document.getElementById('base1').className = `base${newState.bases[0] ? ' active-base' : ''}`;
-      document.getElementById('base2').className = `base${newState.bases[1] ? ' active-base' : ''}`;
-      document.getElementById('base3').className = `base${newState.bases[2] ? ' active-base' : ''}`;
+      const bases = (document.getElementById('input-bases').value || '0,0,0').split(',');
+      document.getElementById('base1').className = bases[0] === '1' ? 'base active-base' : 'base';
+      document.getElementById('base2').className = bases[1] === '1' ? 'base active-base' : 'base';
+      document.getElementById('base3').className = bases[2] === '1' ? 'base active-base' : 'base';
     }
-
-    // Initial render
-    updateOverlay(state);
   </script>
 </body>
 </html>
