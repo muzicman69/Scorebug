@@ -13,6 +13,7 @@
       padding: 0;
       margin: 0;
       overflow-x: hidden;
+      transition: background 0.5s ease;
     }
 
     .scorebug {
@@ -130,6 +131,13 @@
       flex: 1;
       min-width: 80px;
     }
+
+    .control-panel input[type="text"] {
+      flex: 2;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -178,6 +186,10 @@
       <button onclick="toggleBase(2)">Toggle 2nd</button>
       <button onclick="toggleBase(3)">Toggle 3rd</button>
     </div>
+    <div class="control-row">
+      <input type="text" id="background-url" placeholder="Enter background image URL">
+      <button onclick="changeBackground()">Change Background</button>
+    </div>
   </div>
 
   <script>
@@ -218,7 +230,13 @@
       updateScorebug();
     }
 
-    // Initial update
+    function changeBackground() {
+      const url = document.getElementById('background-url').value;
+      if (url) {
+        document.body.style.background = `url('${url}') center/cover no-repeat`;
+      }
+    }
+
     updateScorebug();
   </script>
 </body>
