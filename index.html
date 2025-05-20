@@ -190,6 +190,14 @@
       <input type="text" id="background-url" placeholder="Enter background image URL">
       <button onclick="changeBackground()">Change Background</button>
     </div>
+    <div class="control-row">
+      <input type="text" id="home-logo-url" placeholder="Home team logo URL">
+      <button onclick="changeLogo('home')">Set Home Logo</button>
+    </div>
+    <div class="control-row">
+      <input type="text" id="away-logo-url" placeholder="Away team logo URL">
+      <button onclick="changeLogo('away')">Set Away Logo</button>
+    </div>
   </div>
 
   <script>
@@ -234,6 +242,13 @@
       const url = document.getElementById('background-url').value;
       if (url) {
         document.body.style.background = `url('${url}') center/cover no-repeat`;
+      }
+    }
+
+    function changeLogo(team) {
+      const url = document.getElementById(`${team}-logo-url`).value;
+      if (url) {
+        document.getElementById(`${team}-logo`).src = url;
       }
     }
 
